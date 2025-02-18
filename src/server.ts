@@ -34,10 +34,18 @@ app.post(
         name: z.string(), // pode ser opcional  .optional()
         email: z.string().email(),
       }),
+      response: {
+        201: z.object({
+          name: z.string(),
+          email: z.string(),
+        }),
+      },
     },
   },
-  (request, reply) => {
+  async (request, reply) => {
     const { name, email } = request.body;
+
+    //Faria a inscrição no banco de dados
 
     return reply.status(201).send({
       name,
