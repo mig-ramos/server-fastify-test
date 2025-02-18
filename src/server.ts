@@ -4,55 +4,47 @@ import {
   validatorCompiler,
   serializerCompiler,
   ZodTypeProvider,
+  jsonSchemaTransform,
 } from "fastify-type-provider-zod";
 
-import { z } from "zod";
+import { fastifySwagger } from "@fastify/swagger";
+import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import { subscribeToEventRoute } from "./routes/subscribe-to-event-route";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
 
-app.register(fastifyCors, {
-  origin: "http://localhost:3000",
-});
+// app.register(fastifyCors, {
+//   origin: "http://localhost:3000",
+// });
 // URLs front ends acesse o server
 // app.register(fastifyCors, {
 //     origin: true,
 //   });
 // ou
-// app.register(fastifyCors);
+app.register(fastifyCors);
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "SIDEBIT",
+      version: "O.O.1",
+    },
+  },
+  transform: jsonSchemaTransform,
+});
+
+app.register(fastifySwaggerUi, {
+  routePrefix: "/docs",
+});
 
 //body - recursos no corpo da requisição
 //search params - do rota depois do ponto de interrogação, filtros, paginação
 //route params  -  identificação de recursos id.
-app.post(
-  "/subscriptions",
-  {
-    schema: {
-      body: z.object({
-        name: z.string(), // pode ser opcional  .optional()
-        email: z.string().email(),
-      }),
-      response: {
-        201: z.object({
-          name: z.string(),
-          email: z.string(),
-        }),
-      },
-    },
-  },
-  async (request, reply) => {
-    const { name, email } = request.body;
 
-    //Faria a inscrição no banco de dados
-
-    return reply.status(201).send({
-      name,
-      email,
-    });
-  }
-);
+app.register(subscribeToEventRoute);
 
 app.listen({ port: 3333 }).then(() => {
   console.log("HTTP server running!");
