@@ -14,3 +14,9 @@
     "dev": "tsx watch src/server.ts"
   },
 11. Depois: npm run dev
+12. npm i @fastify/cors
+13. npm i zod
+14. npm i fastify-type-provider-zod
+15. Os itens acima são para validar e processar de que forma retornará os dados do servidor
+16. DOCUMENTAÇÃO: npm i @fastify/swagger @fastify/swagger-ui
+17. Depois da exigencia de isolar a rota num arquivo separado, acessar a rota "/docs", já informa o tipo de dados de entrada e as possíveis respostas desta rota
